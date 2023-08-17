@@ -17,8 +17,11 @@ AUTH_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 
 def get_weather(request):
-    long = '46.0086'
-    lat = '51.5406'
+    """Отправляет запрос к api open-meteo и
+    возвращает данные о погоде в саратове"""
+
+    long = '46.0086'  # долгота Саратова
+    lat = '51.5406'  # широта Саратова
     url = f'https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={long}&current_weather=true'
     response = requests.get(url)
     weather_data = response.json()
@@ -26,6 +29,9 @@ def get_weather(request):
 
 
 class SendEmailAPIView(APIView):
+    """Реализует метод POST для отправки писем
+    На вход принимает два параметра: адресант и текст письма"""
+
     def post(self, request):
         data = json.loads(request.body)
         email = data.get('email')
@@ -43,6 +49,10 @@ class SendEmailAPIView(APIView):
 
 
 class SortNumbersAPIView(APIView):
+    """Реализует метод POST для сортировки массива.
+    На вход дается массив чисел и индекс алгоритма сортировки, где
+    1 - быстрая сортировка, 2 - пузырьковая, 3 - Timsort, 4 - вставками"""
+
     def post(self, request):
         numbers = request.data.get('numbers', [])
         algorithm = request.data.get('algorithm', None)
@@ -89,10 +99,16 @@ class SortNumbersAPIView(APIView):
 
 
 class ArticleListCreateView(generics.ListCreateAPIView):
+    """Реализует методы GET для получения
+    всех статей и POST для создания новой статьи"""
+
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
 
 
 class ArticleRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    """Реализует методы PUT DELETE и
+    GET для получения конкретной статьи"""
+
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
